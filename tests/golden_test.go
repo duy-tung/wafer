@@ -21,7 +21,7 @@ func TestGoldenFiles(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/embeddings":
 			// Return deterministic mock embedding for golden tests
-			response := map[string]interface{}{
+			response := map[string]any{
 				"embedding": []float64{0.1, 0.2, 0.3, 0.4, 0.5},
 			}
 			w.Header().Set("Content-Type", "application/json")
@@ -80,7 +80,7 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 		// Build wafer using go build from the repo root
 		// Find the repo root by going up from the current working directory
 		repoRoot := wd
-		for i := 0; i < 10; i++ {
+		for range 10 {
 			if _, err := os.Stat(filepath.Join(repoRoot, "go.mod")); err == nil {
 				break
 			}
@@ -139,7 +139,7 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 		if line == "" {
 			continue
 		}
-		var record map[string]interface{}
+		var record map[string]any
 		if err := json.Unmarshal([]byte(line), &record); err != nil {
 			return nil, fmt.Errorf("invalid JSON on line %d: %w", i+1, err)
 		}

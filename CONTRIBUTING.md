@@ -15,7 +15,7 @@ Thank you for your interest in contributing to wafer! This document provides gui
 
 ### Prerequisites
 
-- Go 1.24 or later
+- Go 1.23 or later
 - Make
 - Docker (optional)
 - Git
@@ -203,7 +203,7 @@ What actually happens
 
 **Environment**
 - OS: [e.g., Ubuntu 22.04]
-- Go version: [e.g., 1.24]
+- Go version: [e.g., 1.23]
 - Wafer version: [e.g., v0.1.0]
 - Ollama version: [e.g., 0.1.17]
 
