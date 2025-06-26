@@ -219,7 +219,7 @@ Wafer generates JSONL (JSON Lines) output with the following schema:
 
 ### Prerequisites
 
-- Go 1.23 or later
+- Go 1.24 or later
 - Make
 - Docker (optional, for containerized development)
 - Ollama (for testing)

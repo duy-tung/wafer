@@ -73,7 +73,7 @@ sudo mv wafer /usr/local/bin/
 ### Method 2: Build from Source
 
 **Prerequisites:**
-- Go 1.23 or later
+- Go 1.24 or later
 - Make (optional, but recommended)
 - Git
 

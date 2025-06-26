@@ -316,7 +316,7 @@ type Config struct {
 
 ### Container Architecture
 - **Base Image**: debian:bookworm-slim (minimal, secure)
-- **Build Stage**: golang:1.23 (multi-stage build for smaller final image)
+- **Build Stage**: golang:1.24 (multi-stage build for smaller final image)
 - **Binary Size**: ~6MB statically linked binary
 - **Final Image Size**: ~80MB (including CA certificates)
 

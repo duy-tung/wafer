@@ -9,7 +9,7 @@ This document provides comprehensive performance benchmarks for the wafer CLI to
 - **CPU**: Intel Core i7-12700K (12 cores, 20 threads)
 - **Memory**: 32GB DDR4-3200
 - **Storage**: NVMe SSD (Samsung 980 PRO)
-- **Go Version**: 1.23
+- **Go Version**: 1.24
 - **Ollama Version**: 0.1.17
 
 ### Test Data

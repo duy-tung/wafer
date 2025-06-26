@@ -83,7 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation**: Complete README, technical specification, and usage guides
 
 ### Technical Details
-- Built with Go 1.23
+- Built with Go 1.24
 - Uses `github.com/alexflint/go-arg` for CLI argument parsing
 - Uses `github.com/google/uuid` for UUID generation
 - HTTP client with 30-second timeout and 3 retry attempts
