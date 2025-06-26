@@ -97,16 +97,61 @@ func TestChunker_ChunkFile_NonExistent(t *testing.T) {
 func TestNewChunker(t *testing.T) {
 	chunkSize := 500
 	chunker := NewChunker(chunkSize)
-	
+
 	if chunker == nil {
 		t.Error("NewChunker() returned nil")
 	}
-	
+
 	// Test that the chunker works with the specified chunk size
 	text := strings.Repeat("word ", chunkSize*2) // Text with 2x chunk size
 	chunks := chunker.ChunkText(text)
-	
+
 	if len(chunks) < 2 {
 		t.Errorf("Expected at least 2 chunks for large text, got %d", len(chunks))
+	}
+}
+
+func TestChunker_LineEndingNormalization(t *testing.T) {
+	chunker := NewChunker(300)
+
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "Windows line endings",
+			input:    "Line 1\r\nLine 2\r\nLine 3",
+			expected: "Line 1\nLine 2\nLine 3",
+		},
+		{
+			name:     "Unix line endings",
+			input:    "Line 1\nLine 2\nLine 3",
+			expected: "Line 1\nLine 2\nLine 3",
+		},
+		{
+			name:     "Old Mac line endings",
+			input:    "Line 1\rLine 2\rLine 3",
+			expected: "Line 1\nLine 2\nLine 3",
+		},
+		{
+			name:     "Mixed line endings",
+			input:    "Line 1\r\nLine 2\nLine 3\rLine 4",
+			expected: "Line 1\nLine 2\nLine 3\nLine 4",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chunks := chunker.ChunkText(tt.input)
+			if len(chunks) != 1 {
+				t.Errorf("Expected 1 chunk, got %d", len(chunks))
+				return
+			}
+
+			if chunks[0].Text != tt.expected {
+				t.Errorf("ChunkText() got %q, want %q", chunks[0].Text, tt.expected)
+			}
+		})
 	}
 }

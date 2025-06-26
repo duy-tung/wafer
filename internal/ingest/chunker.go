@@ -52,6 +52,10 @@ func (c *Chunker) ChunkText(text string) []Chunk {
 		return []Chunk{}
 	}
 
+	// Normalize line endings to Unix style for consistent cross-platform behavior
+	text = strings.ReplaceAll(text, "\r\n", "\n") // Windows -> Unix
+	text = strings.ReplaceAll(text, "\r", "\n")   // Old Mac -> Unix
+
 	// Split text into words while preserving whitespace information
 	words := c.tokenizeWords(text)
 	if len(words) == 0 {
