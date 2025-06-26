@@ -1,0 +1,7 @@
+This is a multi-line test file for golden file testing.
+
+It contains multiple paragraphs and line breaks to test how the wafer CLI tool handles different text structures and formatting.
+
+The third paragraph includes some special characters: !@#$%^&*()_+-={}[]|;':",./<>?
+
+This ensures comprehensive testing of the text processing pipeline.

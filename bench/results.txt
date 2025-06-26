@@ -1,0 +1,19 @@
+?   	wafer/cmd/wafer	[no test files]
+?   	wafer/golden	[no test files]
+?   	wafer/internal/config	[no test files]
+?   	wafer/internal/ingest	[no test files]
+--- FAIL: TestGoldenFiles (0.03s)
+    --- FAIL: TestGoldenFiles/multiline (0.03s)
+        golden.go:42: process error: wafer command failed: exit status 1
+            Output: time=2025-06-26T09:21:40.245Z level=INFO msg="Starting wafer ingestion process" directory=/mnt/persist/workspace/tests/golden model=test-model output=/tmp/wafer-golden-4194431112/output.jsonl chunk_size=50
+            time=2025-06-26T09:21:40.245Z level=INFO msg="Checking Ollama API connectivity..."
+            time=2025-06-26T09:21:40.246Z level=ERROR msg="Processing failed" error="Ollama API health check failed: Ollama API is not accessible: Get \"http://localhost:11434/api/tags\": dial tcp 127.0.0.1:11434: connect: connection refused"
+    --- FAIL: TestGoldenFiles/simple (0.00s)
+        golden.go:42: process error: wafer command failed: exit status 1
+            Output: time=2025-06-26T09:21:40.249Z level=INFO msg="Starting wafer ingestion process" directory=/mnt/persist/workspace/tests/golden model=test-model output=/tmp/wafer-golden-3280869399/output.jsonl chunk_size=50
+            time=2025-06-26T09:21:40.249Z level=INFO msg="Checking Ollama API connectivity..."
+            time=2025-06-26T09:21:40.250Z level=ERROR msg="Processing failed" error="Ollama API health check failed: Ollama API is not accessible: Get \"http://localhost:11434/api/tags\": dial tcp 127.0.0.1:11434: connect: connection refused"
+FAIL
+exit status 1
+FAIL	wafer/tests	0.044s
+FAIL

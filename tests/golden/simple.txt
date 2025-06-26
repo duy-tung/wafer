@@ -1,0 +1,1 @@
+This is a simple test file for golden file testing. It contains exactly fifty words to test the chunking algorithm and ensure that the wafer CLI tool produces consistent, reproducible output for regression testing and validation purposes.
