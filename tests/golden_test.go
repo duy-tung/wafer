@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -68,7 +69,13 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to get working directory: %w", err)
 	}
 
-	waferBin := filepath.Join(wd, "wafer.exe")
+	// Determine binary name based on platform
+	binaryName := "wafer"
+	if runtime.GOOS == "windows" {
+		binaryName = "wafer.exe"
+	}
+
+	waferBin := filepath.Join(wd, binaryName)
 	if _, err := os.Stat(waferBin); os.IsNotExist(err) {
 		// Build wafer using go build from the repo root
 		// Find the repo root by going up from the current working directory
