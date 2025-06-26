@@ -61,7 +61,23 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 	defer os.RemoveAll(tmpDir)
 
 	outputPath := filepath.Join(tmpDir, "output.jsonl")
-	inputDir := filepath.Dir(srcPath)
+
+	// Create a temporary directory with just the single test file
+	testInputDir := filepath.Join(tmpDir, "input")
+	if err := os.MkdirAll(testInputDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create test input dir: %w", err)
+	}
+
+	// Copy the source file to the test input directory
+	srcContent, err := os.ReadFile(srcPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read source file: %w", err)
+	}
+
+	testFilePath := filepath.Join(testInputDir, filepath.Base(srcPath))
+	if err := os.WriteFile(testFilePath, srcContent, 0644); err != nil {
+		return nil, fmt.Errorf("failed to write test file: %w", err)
+	}
 
 	// Build wafer binary if it doesn't exist
 	wd, err := os.Getwd()
@@ -98,14 +114,17 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 		}
 	}
 
-	// Run wafer ingest command
-	cmd := exec.Command(waferBin, "ingest", inputDir,
+	// Run wafer ingest command on the test input directory
+	cmd := exec.Command(waferBin, "ingest", testInputDir,
 		"--output", outputPath,
 		"--chunk-size", "50", // Small chunk size for testing
 		"--model", "test-model")
 
 	// Set environment for the command
 	ollamaHost := os.Getenv("OLLAMA_HOST")
+	if ollamaHost == "" {
+		return nil, fmt.Errorf("OLLAMA_HOST environment variable not set")
+	}
 
 	// Create a new environment with OLLAMA_HOST explicitly set
 	env := []string{}
