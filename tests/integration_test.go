@@ -156,7 +156,7 @@ func TestEndToEndProcessing(t *testing.T) {
 		sourceFiles[record.SourceFile] = true
 	}
 
-	expectedFiles := []string{"file1.txt", "file2.txt", "subdir/file3.txt"}
+	expectedFiles := []string{"file1.txt", "file2.txt", filepath.Join("subdir", "file3.txt")}
 	for _, expectedFile := range expectedFiles {
 		if !sourceFiles[expectedFile] {
 			t.Errorf("Expected file %s not found in output", expectedFile)

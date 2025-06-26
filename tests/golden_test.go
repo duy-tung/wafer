@@ -63,10 +63,29 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 	inputDir := filepath.Dir(srcPath)
 
 	// Build wafer binary if it doesn't exist
-	waferBin := filepath.Join(os.Getenv("HOME"), "bin", "wafer")
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get working directory: %w", err)
+	}
+
+	waferBin := filepath.Join(wd, "wafer.exe")
 	if _, err := os.Stat(waferBin); os.IsNotExist(err) {
-		// Build wafer
-		cmd := exec.Command("make", "build")
+		// Build wafer using go build from the repo root
+		// Find the repo root by going up from the current working directory
+		repoRoot := wd
+		for i := 0; i < 10; i++ {
+			if _, err := os.Stat(filepath.Join(repoRoot, "go.mod")); err == nil {
+				break
+			}
+			parent := filepath.Dir(repoRoot)
+			if parent == repoRoot {
+				return nil, fmt.Errorf("go.mod not found")
+			}
+			repoRoot = parent
+		}
+
+		cmd := exec.Command("go", "build", "-o", waferBin, "./cmd/wafer")
+		cmd.Dir = repoRoot
 		if err := cmd.Run(); err != nil {
 			return nil, fmt.Errorf("failed to build wafer: %w", err)
 		}
@@ -79,7 +98,17 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 		"--model", "test-model")
 
 	// Set environment for the command
-	cmd.Env = append(os.Environ(), "OLLAMA_HOST="+os.Getenv("OLLAMA_HOST"))
+	ollamaHost := os.Getenv("OLLAMA_HOST")
+
+	// Create a new environment with OLLAMA_HOST explicitly set
+	env := []string{}
+	for _, e := range os.Environ() {
+		if !strings.HasPrefix(e, "OLLAMA_HOST=") {
+			env = append(env, e)
+		}
+	}
+	env = append(env, "OLLAMA_HOST="+ollamaHost)
+	cmd.Env = env
 
 	// Capture both stdout and stderr
 	output, err := cmd.CombinedOutput()

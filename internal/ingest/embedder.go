@@ -8,6 +8,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -33,11 +34,17 @@ type Embedder struct {
 
 // NewEmbedder creates a new embedder with the specified model
 func NewEmbedder(model string) *Embedder {
+	// Check for OLLAMA_HOST environment variable
+	baseURL := "http://localhost:11434" // Default Ollama URL
+	if host := os.Getenv("OLLAMA_HOST"); host != "" {
+		baseURL = host
+	}
+
 	return &Embedder{
 		client: &http.Client{
 			Timeout: 30 * time.Second,
 		},
-		baseURL: "http://localhost:11434", // Default Ollama URL
+		baseURL: baseURL,
 		model:   model,
 		retries: 3,
 		backoff: time.Second,
