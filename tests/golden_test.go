@@ -107,10 +107,17 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 			repoRoot = parent
 		}
 
-		cmd := exec.Command("go", "build", "-o", waferBin, "./cmd/wafer")
-		cmd.Dir = repoRoot
-		if err := cmd.Run(); err != nil {
-			return nil, fmt.Errorf("failed to build wafer: %w", err)
+		buildCmd := exec.Command("go", "build", "-o", waferBin, "./cmd/wafer")
+		buildCmd.Dir = repoRoot
+		if output, err := buildCmd.CombinedOutput(); err != nil {
+			return nil, fmt.Errorf("failed to build wafer: %w\nBuild output: %s", err, output)
+		}
+
+		// Ensure the binary has execute permissions on Unix systems
+		if runtime.GOOS != "windows" {
+			if err := os.Chmod(waferBin, 0755); err != nil {
+				return nil, fmt.Errorf("failed to set execute permissions: %w", err)
+			}
 		}
 	}
 
