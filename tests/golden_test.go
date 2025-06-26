@@ -10,10 +10,13 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"testing"
 
 	"wafer/golden"
 )
+
+var buildWaferOnce sync.Once
 
 func TestGoldenFiles(t *testing.T) {
 	// Create mock Ollama server for golden tests
@@ -37,22 +40,14 @@ func TestGoldenFiles(t *testing.T) {
 	defer server.Close()
 
 	// Set environment variable for mock server
-	originalHost := os.Getenv("OLLAMA_HOST")
-	os.Setenv("OLLAMA_HOST", server.URL)
-	defer func() {
-		if originalHost != "" {
-			os.Setenv("OLLAMA_HOST", originalHost)
-		} else {
-			os.Unsetenv("OLLAMA_HOST")
-		}
-	}()
+	t.Setenv("OLLAMA_HOST", server.URL)
 
 	golden.Run(t, "tests/golden", ".txt", ".jsonl", func(srcPath string) ([]byte, error) {
-		return runWaferOnFile(srcPath)
+		return runWaferOnFile(t, srcPath)
 	})
 }
 
-func runWaferOnFile(srcPath string) ([]byte, error) {
+func runWaferOnFile(t *testing.T, srcPath string) ([]byte, error) {
 	// Create temporary output file
 	tmpDir, err := os.MkdirTemp("", "wafer-golden-*")
 	if err != nil {
@@ -80,20 +75,20 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 	}
 
 	// Build wafer binary if it doesn't exist
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get working directory: %w", err)
-	}
+	var buildErr error
+	buildWaferOnce.Do(func() {
+		wd, err := os.Getwd()
+		if err != nil {
+			buildErr = fmt.Errorf("failed to get working directory: %w", err)
+			return
+		}
 
-	// Determine binary name based on platform
-	binaryName := "wafer"
-	if runtime.GOOS == "windows" {
-		binaryName = "wafer.exe"
-	}
+		// Determine binary name based on platform
+		binaryName := "wafer"
+		if runtime.GOOS == "windows" {
+			binaryName = "wafer.exe"
+		}
 
-	waferBin := filepath.Join(wd, binaryName)
-	if _, err := os.Stat(waferBin); os.IsNotExist(err) {
-		// Build wafer using go build from the repo root
 		// Find the repo root by going up from the current working directory
 		repoRoot := wd
 		for i := 0; i < 10; i++ {
@@ -102,24 +97,59 @@ func runWaferOnFile(srcPath string) ([]byte, error) {
 			}
 			parent := filepath.Dir(repoRoot)
 			if parent == repoRoot {
-				return nil, fmt.Errorf("go.mod not found")
+				buildErr = fmt.Errorf("go.mod not found")
+				return
 			}
 			repoRoot = parent
+		}
+
+		waferBin := filepath.Join(repoRoot, "bin", binaryName)
+		if err := os.MkdirAll(filepath.Dir(waferBin), 0755); err != nil {
+			buildErr = fmt.Errorf("failed to create bin directory: %w", err)
+			return
 		}
 
 		buildCmd := exec.Command("go", "build", "-o", waferBin, "./cmd/wafer")
 		buildCmd.Dir = repoRoot
 		if output, err := buildCmd.CombinedOutput(); err != nil {
-			return nil, fmt.Errorf("failed to build wafer: %w\nBuild output: %s", err, output)
+			buildErr = fmt.Errorf("failed to build wafer: %w\nBuild output: %s", err, output)
+			return
 		}
 
 		// Ensure the binary has execute permissions on Unix systems
 		if runtime.GOOS != "windows" {
 			if err := os.Chmod(waferBin, 0755); err != nil {
-				return nil, fmt.Errorf("failed to set execute permissions: %w", err)
+				buildErr = fmt.Errorf("failed to set execute permissions: %w", err)
+				return
 			}
 		}
+	})
+
+	if buildErr != nil {
+		return nil, buildErr
 	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get working directory: %w", err)
+	}
+	repoRoot := wd
+	for i := 0; i < 10; i++ {
+		if _, err := os.Stat(filepath.Join(repoRoot, "go.mod")); err == nil {
+			break
+		}
+		parent := filepath.Dir(repoRoot)
+		if parent == repoRoot {
+			return nil, fmt.Errorf("go.mod not found")
+		}
+		repoRoot = parent
+	}
+
+	binaryName := "wafer"
+	if runtime.GOOS == "windows" {
+		binaryName = "wafer.exe"
+	}
+	waferBin := filepath.Join(repoRoot, "bin", binaryName)
 
 	// Run wafer ingest command on the test input directory
 	cmd := exec.Command(waferBin, "ingest", testInputDir,

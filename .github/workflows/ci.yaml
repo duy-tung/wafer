@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -16,51 +16,51 @@ jobs:
         go-version: [1.24]
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ matrix.go-version }}
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
 
-    - name: Download dependencies
-      run: go mod download
+      - name: Download dependencies
+        run: go mod download
 
-    - name: Run tests with race detector
-      run: go test ./... -v -race
+      - name: Run tests with race detector
+        run: go test ./... -v -race
 
-    - name: Run tests with coverage
-      run: go test ./... -v -coverprofile=coverage.out
+      - name: Run tests with coverage
+        run: go test ./... -v -coverprofile=coverage.out
 
-    - name: Upload coverage reports
-      if: matrix.os == 'ubuntu-latest'
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.out
-        flags: unittests
-        name: codecov-umbrella
+      - name: Upload coverage reports
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.24
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+          cache: true
 
-    - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: v1.54.2
-        args: --timeout=5m
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59.1
+          args: --timeout=5m
 
   build:
     name: Build
@@ -68,24 +68,24 @@ jobs:
     needs: [test, lint]
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.24
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+          cache: true
 
-    - name: Build binary
-      run: make build
+      - name: Build binary
+        run: make build
 
-    - name: Test binary
-      run: |
-        mkdir -p test_input
-        echo "This is a test file for the wafer CLI tool." > test_input/test.txt
-        ~/bin/wafer --help || echo "Binary test completed"
-        # Note: Full integration test would require Ollama running
+      - name: Test binary
+        run: |
+          mkdir -p test_input
+          echo "This is a test file for the wafer CLI tool." > test_input/test.txt
+          ~/bin/wafer --help || echo "Binary test completed"
+          # Note: Full integration test would require Ollama running
 
   release:
     name: Release
@@ -94,22 +94,22 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.24
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.24
+          cache: true
 
-    - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v5
-      with:
-        distribution: goreleaser
-        version: latest
-        args: release --clean
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
