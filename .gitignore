@@ -28,5 +28,38 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+dist/
+bin/
+
+# Storage directory (contains generated embeddings)
+storage/*.jsonl
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+*.log
+
+# Test fixtures output
+tests/fixtures/*.jsonl
+
+# Docker Compose overrides
+docker-compose.override.yml
+docker-compose.*.yml

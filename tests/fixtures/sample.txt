@@ -1,0 +1,11 @@
+This is a sample text file for testing the wafer CLI tool. It contains multiple sentences and paragraphs to test the text chunking functionality.
+
+The wafer tool is designed to process text files and generate embeddings using Ollama. It should recursively discover .txt files in a directory, chunk the text content, and generate embeddings for each chunk.
+
+This paragraph contains exactly fifty words to test the chunking algorithm. The chunker should split text into chunks of approximately three hundred words while preserving word boundaries. This helps ensure that the generated embeddings are meaningful and coherent.
+
+Here's another paragraph with some technical content. Machine learning models like those used for generating embeddings require consistent input formatting. The JSONL output format includes metadata such as source file paths, chunk indices, word counts, and timestamps.
+
+The final paragraph tests edge cases and special characters. It includes numbers like 123, punctuation marks (!@#$%^&*), and unicode characters like émojis 🚀. The chunker should handle these gracefully while maintaining the integrity of the text content.
+
+This sample file should be chunked into multiple pieces when processed by the wafer tool, allowing us to test the complete workflow from file discovery through embedding generation to JSONL output.

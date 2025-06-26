@@ -1,0 +1,1 @@
+This is a small file with fewer than 300 words. It should be treated as a single chunk by the wafer tool. This tests the edge case where files are smaller than the configured chunk size.
