@@ -5,10 +5,9 @@ A production-ready Go CLI tool that processes text files and generates embedding
 [![CI](https://github.com/duy-tung/wafer/actions/workflows/ci.yaml/badge.svg)](https://github.com/duy-tung/wafer/actions/workflows/ci.yaml)
 [![Docker](https://github.com/duy-tung/wafer/actions/workflows/docker-publish.yaml/badge.svg)](https://github.com/duy-tung/wafer/actions/workflows/docker-publish.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/duy-tung/wafer)](https://goreportcard.com/report/github.com/duy-tung/wafer)
-[![codecov](https://codecov.io/gh/duy-tung/wafer/branch/main/graph/badge.svg)](https://codecov.io/gh/duy-tung/wafer)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Release](https://img.shields.io/github/v/release/duy-tung/wafer)](https://github.com/duy-tung/wafer/releases)
-[![Docker Pulls](https://img.shields.io/docker/pulls/ghcr.io/duy-tung/wafer)](https://github.com/duy-tung/wafer/pkgs/container/wafer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/duy-tung/wafer)](https://github.com/duy-tung/wafer)
 
 ## ✨ Features
 
