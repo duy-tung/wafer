@@ -28,11 +28,15 @@ func TestGoldenFiles(t *testing.T) {
 				"embedding": []float64{0.1, 0.2, 0.3, 0.4, 0.5},
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(response)
+			if err := json.NewEncoder(w).Encode(response); err != nil {
+				http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			}
 		case "/api/tags":
 			// Health check endpoint
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"models":[]}`))
+			if _, err := w.Write([]byte(`{"models":[]}`)); err != nil {
+				http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			}
 		default:
 			http.NotFound(w, r)
 		}

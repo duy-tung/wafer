@@ -23,7 +23,9 @@ func TestEmbedder_GetEmbedding(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		}
 	}))
 	defer server.Close()
 
@@ -54,7 +56,9 @@ func TestEmbedder_HealthCheck(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/api/tags" {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"models":[]}`))
+			if _, err := w.Write([]byte(`{"models":[]}`)); err != nil {
+				http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			}
 		} else {
 			http.NotFound(w, r)
 		}
@@ -85,7 +89,7 @@ func TestEmbedder_HealthCheck_Failure(t *testing.T) {
 func TestNewEmbedder(t *testing.T) {
 	model := "test-model"
 	embedder := NewEmbedder(model)
-	
+
 	if embedder == nil {
 		t.Error("NewEmbedder() returned nil")
 	}
@@ -105,11 +109,11 @@ func TestNewEmbedder_WithOllamaHost(t *testing.T) {
 	}()
 
 	embedder := NewEmbedder("test-model")
-	
+
 	if embedder == nil {
-		t.Error("NewEmbedder() returned nil")
+		t.Fatal("NewEmbedder() returned nil")
 	}
-	
+
 	// Test that it uses the environment variable
 	if embedder.baseURL != testHost {
 		t.Errorf("NewEmbedder() baseURL = %s, want %s", embedder.baseURL, testHost)
@@ -119,9 +123,9 @@ func TestNewEmbedder_WithOllamaHost(t *testing.T) {
 func TestEmbedder_SetBaseURL(t *testing.T) {
 	embedder := NewEmbedder("test-model")
 	newURL := "http://custom.example.com:8080"
-	
+
 	embedder.SetBaseURL(newURL)
-	
+
 	if embedder.baseURL != newURL {
 		t.Errorf("SetBaseURL() baseURL = %s, want %s", embedder.baseURL, newURL)
 	}
