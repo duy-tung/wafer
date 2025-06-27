@@ -69,12 +69,12 @@ func TestConfig_GetAbsolutePath(t *testing.T) {
 	config := &Config{
 		Directory: ".",
 	}
-	
+
 	path, err := config.GetAbsolutePath()
 	if err != nil {
 		t.Errorf("GetAbsolutePath() error = %v", err)
 	}
-	
+
 	if !filepath.IsAbs(path) {
 		t.Errorf("GetAbsolutePath() returned relative path: %s", path)
 	}
@@ -84,12 +84,12 @@ func TestConfig_GetOutputPath(t *testing.T) {
 	config := &Config{
 		Output: "output.jsonl",
 	}
-	
+
 	path, err := config.GetOutputPath()
 	if err != nil {
 		t.Errorf("GetOutputPath() error = %v", err)
 	}
-	
+
 	if !filepath.IsAbs(path) {
 		t.Errorf("GetOutputPath() returned relative path: %s", path)
 	}

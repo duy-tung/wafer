@@ -1,0 +1,68 @@
+run:
+  timeout: 5m
+  tests: true
+
+output:
+  formats:
+    - format: colored-line-number
+      path: stdout
+
+linters-settings:
+  gocyclo:
+    min-complexity: 20  # Allow higher complexity for test functions
+  lll:
+    line-length: 140
+  goimports:
+    local-prefixes: wafer
+  gosec:
+    excludes:
+      - G306  # Allow file permissions for test files
+  gocritic:
+    disabled-checks:
+      - regexpSimplify
+      - httpNoBody
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - gocritic
+    - gosec
+    - gocyclo
+    - lll
+
+  disable:
+    - depguard  # Too restrictive for internal imports
+    - stylecheck  # Too opinionated for package comments
+
+issues:
+  exclude-dirs:
+    - vendor
+  exclude-files:
+    - ".*\\.pb\\.go$"
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+        - gocyclo
+        - lll
+    - path: cmd/
+      linters:
+        - gochecknoinits
+    - text: "shadow: declaration of \"err\""
+      linters:
+        - govet
+    - text: "error strings should not be capitalized"
+      linters:
+        - stylecheck
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
