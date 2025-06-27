@@ -78,7 +78,7 @@ dockers:
   - image_templates:
       - "ghcr.io/duy-tung/wafer:{{ .Version }}"
       - "ghcr.io/duy-tung/wafer:latest"
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.goreleaser
     build_flag_templates:
       - "--platform=linux/amd64"
       - "--label=org.opencontainers.image.created={{.Date}}"

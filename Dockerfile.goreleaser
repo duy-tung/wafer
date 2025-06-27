@@ -1,0 +1,20 @@
+# Final minimal image for GoReleaser
+FROM debian:bookworm-slim
+
+# Install CA certificates and ensure update
+RUN apt-get update \
+    && apt-get install -y ca-certificates \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add wafer binary (GoReleaser will copy the built binary here)
+COPY wafer /usr/bin/wafer
+
+# Create storage directory for default output
+RUN mkdir -p /app/storage
+
+# Set working directory
+WORKDIR /app
+
+# Set default entrypoint so all subcommands are supported
+ENTRYPOINT ["/usr/bin/wafer"]
