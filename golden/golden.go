@@ -118,5 +118,10 @@ func normalizeOutput(root string, b []byte) []byte {
 	uuidRE := regexp.MustCompile(`"id":"[a-f0-9-]+"`)
 	out = uuidRE.ReplaceAllString(out, `"id":"550e8400-e29b-41d4-a716-446655440000"`)
 
+	// Normalize line endings for cross-platform consistency
+	// Convert all line endings to Unix style (\n) to match chunker normalization
+	out = strings.ReplaceAll(out, "\r\n", "\n") // Windows -> Unix
+	out = strings.ReplaceAll(out, "\r", "\n")   // Old Mac -> Unix
+
 	return []byte(strings.TrimSpace(out))
 }
