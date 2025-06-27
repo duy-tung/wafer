@@ -76,9 +76,11 @@ changelog:
 
 dockers:
   - image_templates:
-      - "ghcr.io/duy-tung/wafer:{{ .Version }}"
-      - "ghcr.io/duy-tung/wafer:latest"
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-amd64"
     dockerfile: Dockerfile
+    use: buildx
+    goos: linux
+    goarch: amd64
     build_flag_templates:
       - "--target=release"
       - "--platform=linux/amd64"
@@ -88,3 +90,28 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
       - "--label=org.opencontainers.image.description=Production-ready Go CLI tool for text processing and embedding generation"
+  - image_templates:
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-arm64"
+    dockerfile: Dockerfile
+    use: buildx
+    goos: linux
+    goarch: arm64
+    build_flag_templates:
+      - "--target=release"
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source={{.GitURL}}"
+      - "--label=org.opencontainers.image.description=Production-ready Go CLI tool for text processing and embedding generation"
+
+docker_manifests:
+  - name_template: "ghcr.io/duy-tung/wafer:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-amd64"
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-arm64"
+  - name_template: "ghcr.io/duy-tung/wafer:latest"
+    image_templates:
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-amd64"
+      - "ghcr.io/duy-tung/wafer:{{ .Version }}-arm64"
