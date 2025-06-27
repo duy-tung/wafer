@@ -1,6 +1,12 @@
 FROM golang:1.24 AS build
 
 WORKDIR /src
+
+# Copy go mod files first for better caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
 COPY . .
 
 # Build wafer binary with trimpath and stripped symbols

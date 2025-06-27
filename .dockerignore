@@ -1,0 +1,25 @@
+# Build artifacts
+bin/
+wafer
+coverage.out
+
+# Development files
+.git/
+.github/
+.vscode/
+.idea/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Test files
+tests/
+bench/
+golden/
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
